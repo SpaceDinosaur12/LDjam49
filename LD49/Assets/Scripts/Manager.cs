@@ -6,7 +6,6 @@ using UnityEngine.Tilemaps;
 public class Manager : MonoBehaviour
 {
     private Tilemap tilemap;
-    public TileBase tile;
 
     public Vector2 waveTime;
     private float waveCounter;
