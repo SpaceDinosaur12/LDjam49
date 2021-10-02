@@ -6,7 +6,8 @@ using UnityEngine.Tilemaps;
 public class Movement : MonoBehaviour
 {
     private Rigidbody2D rb;
-    public Vector2 movement;
+    public float movement;
+    public float movementY;
     public Vector2 direction;
     public float speed;
     public Transform highlight;
@@ -17,10 +18,15 @@ public class Movement : MonoBehaviour
     public TileBase tile;
     private float carryCounter;
 
-    public Collider2D col;
     public float jumpTime;
     private float jumpCounter;
     public float jumpForce;
+
+    public Transform groundPos;
+    public LayerMask ground;
+    public bool land;
+
+    public float rot;
 
     // Start is called before the first frame update
     void Start()
@@ -33,11 +39,16 @@ public class Movement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        movement = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
+        //movement = Input.GetAxis("Horizontal");
 
-        if (movement != Vector2.zero)
+        #region Carry-old
+
+
+        /*movementY = Input.GetAxis("Vertical");
+
+        if (movement != 0)
         {
-            direction = movement;
+            direction = new Vector2(movement, movementY);
         }
 
         if (direction.x > 0)
@@ -45,15 +56,14 @@ public class Movement : MonoBehaviour
             direction = new Vector2(1, direction.y);
         }
 
-        if (direction.y > 0)
-        {
-            direction = new Vector2(direction.x, 1);
-        }
-
-
         if (direction.x < 0)
         {
             direction = new Vector2(-1, direction.y);
+        }
+
+        if (direction.y > 0)
+        {
+            direction = new Vector2(direction.x, 1);
         }
 
         if (direction.y < 0)
@@ -94,32 +104,75 @@ public class Movement : MonoBehaviour
         if (carryCounter > 0)
         {
             carryCounter -= Time.deltaTime;
-        }
+        }*/
 
-        if (Input.GetKeyDown(KeyCode.X))
+        #endregion
+
+        /*if (Physics2D.OverlapCircle(groundPos.position, 0.03f, ground))
         {
-            jumpCounter = jumpTime;
+            if (land == false)
+            {
+               // Vector3Int tilepos = tilemap.WorldToCell(transform.position);
+            }
 
-            rb.velocity = (direction * jumpForce);
+            land = true;
+
+            if (Input.GetKeyDown(KeyCode.X))
+            {
+                rb.velocity = new Vector2(rb.velocity.x, jumpForce);
+            }
         }
+        else
+        {
+            land = false;
+        }
+
+
 
         if (jumpCounter > 0)
         {
             jumpCounter -= Time.deltaTime;
+        }*/
 
-            col.enabled = false;
-        }
-        else
+
+
+        if (Input.GetKey(KeyCode.RightArrow))
         {
-            col.enabled = true;
+            rot += 5;
+        }
+
+        if (Input.GetKey(KeyCode.LeftArrow))
+        {
+            rot -= 5;
         }
     }
     
     private void FixedUpdate()
     {
-        if (jumpCounter <= 0)
+        // rb.velocity = new Vector2(movement * speed, rb.velocity.y);
+
+        if (land)
         {
-            rb.velocity = movement * speed;
+            Vector2 dir = (Vector2)(Quaternion.Euler(0, 0, rot) * Vector2.right);
+
+            rb.velocity = dir * speed;
+        }
+
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        //if (collision.CompareTag("Tilemap"))
+        {
+            land = true;
+        }
+    }
+
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        //if (collision.CompareTag("Tilemap"))
+        {
+            land = false;
         }
     }
 }

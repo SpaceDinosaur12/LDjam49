@@ -24,7 +24,9 @@ public class Manager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (waveCounter > 0)
+        #region Waves-old
+
+        /*if (waveCounter > 0)
         {
             waveCounter -= Time.deltaTime;
         }
@@ -49,6 +51,13 @@ public class Manager : MonoBehaviour
             }
 
             waveCounter = Random.Range(waveTime.x, waveTime.y);
-        }
+        }*/
+
+        #endregion
+    }
+
+    public static void Drift()
+    {
+
     }
 }
