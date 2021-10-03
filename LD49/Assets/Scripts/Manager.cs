@@ -13,6 +13,11 @@ public class Manager : MonoBehaviour
 
     public Vector2Int size;
 
+    public static List<Vector3Int> desBlocks = new List<Vector3Int>();
+
+    public float time;
+    public float counter;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -54,10 +59,60 @@ public class Manager : MonoBehaviour
         }*/
 
         #endregion
+
+        if (counter < 0)
+        {
+            List<Vector3Int> v2 = new List<Vector3Int>();
+            List<Vector3Int> v3 = new List<Vector3Int>();
+
+            foreach (Vector3Int v in desBlocks)
+            {
+                tilemap.SetTile(v, null);
+
+                if (tilemap.HasTile(new Vector3Int(v.x - 1, v.y, 0)))
+                {
+                    v2.Add(new Vector3Int(v.x - 1, v.y, 0));
+                }
+
+                if (tilemap.HasTile(new Vector3Int(v.x + 1, v.y, 0)))
+                {
+                    v2.Add(new Vector3Int(v.x + 1, v.y, 0));
+                }
+
+                if (tilemap.HasTile(new Vector3Int(v.x, v.y - 1, 0)))
+                {
+                    v2.Add(new Vector3Int(v.x, v.y - 1, 0));
+                }
+
+                if (tilemap.HasTile(new Vector3Int(v.x, v.y + 1, 0)))
+                {
+                    v2.Add(new Vector3Int(v.x, v.y + 1, 0));
+                }
+
+
+                v3.Add(v);
+            }
+
+            foreach (Vector3Int v in v2)
+            {
+                desBlocks.Add(v);
+            }
+
+            foreach (Vector3Int v in v3)
+            {
+                desBlocks.Remove(v);
+            }
+
+            counter = time;
+        }
+        else
+        {
+            counter -= Time.deltaTime;
+        }
     }
 
-    public static void Drift()
+    public static void Drift(Vector3Int t)
     {
-
+        desBlocks.Add(t);
     }
 }
