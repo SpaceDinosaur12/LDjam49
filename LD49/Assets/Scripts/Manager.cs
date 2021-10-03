@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using Cinemachine;
+using UnityEngine.SceneManagement;
 
 public class Manager : MonoBehaviour
 {
@@ -18,10 +20,17 @@ public class Manager : MonoBehaviour
     public float time;
     public float counter;
 
+    public static CinemachineVirtualCamera cm;
+
+    public static float shakeTimer;
+    public Animator fade;
+
     // Start is called before the first frame update
     void Start()
     {
         tilemap = GameObject.FindGameObjectWithTag("Tilemap").GetComponent<Tilemap>();
+        cm = GameObject.FindGameObjectWithTag("CM").GetComponent<CinemachineVirtualCamera>();
+        Debug.Log(cm);
 
         waveCounter = Random.Range(waveTime.x, waveTime.y);
     }
@@ -48,6 +57,11 @@ public class Manager : MonoBehaviour
                         allTiles.Add(new Vector3Int(i, o, 0));
                     }
                 }
+            }
+
+            if (allTiles.Count < 1)
+            {
+                End();
             }
 
             for (int i = 0; i < Random.Range(waveStrength.x, waveStrength.y); i++)
@@ -109,10 +123,42 @@ public class Manager : MonoBehaviour
         {
             counter -= Time.deltaTime;
         }
+
+
+
+        if (shakeTimer > 0)
+        {
+            shakeTimer -= Time.deltaTime;
+        }
+        else
+        {
+            CinemachineBasicMultiChannelPerlin cmnoise = cm.GetComponent<CinemachineBasicMultiChannelPerlin>();
+
+            //cmnoise.m_AmplitudeGain = 0;
+        }
     }
 
     public static void Drift(Vector3Int t)
     {
         //desBlocks.Add(t);
+    }
+
+    public static void ScreenShake(float amp, float time)
+    {
+        CinemachineBasicMultiChannelPerlin cmnoise = cm.GetComponent<CinemachineBasicMultiChannelPerlin>();
+        cmnoise.m_AmplitudeGain = amp;
+        shakeTimer = time;
+    }
+
+    public void End()
+    {
+        fade.SetTrigger("Fade");
+
+        Invoke("Next", 0.5f);
+    }
+
+    public void Next()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
     }
 }

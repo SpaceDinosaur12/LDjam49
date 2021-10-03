@@ -7,6 +7,7 @@ TagManager:
   - Tilemap
   - Coin
   - Asteroid
+  - CM
   layers:
   - Default
   - TransparentFX
@@ -15,9 +16,9 @@ TagManager:
   - Water
   - UI
   - Hazard
-  - 
-  - 
-  - 
+  - RenderTexture
+  - MainCam
+  - TextureCam
   - 
   - 
   - 
@@ -43,4 +44,7 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: New Layer 1
+    uniqueID: 2793089275
     locked: 0

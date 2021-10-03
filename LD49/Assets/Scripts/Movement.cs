@@ -26,17 +26,23 @@ public class Movement : MonoBehaviour
     public LayerMask ground;
     public bool land;
 
+    public Animator animator;
+
     // Start is called before the first frame update
     void Start()
     {
         tilemap = GameObject.FindGameObjectWithTag("Tilemap").GetComponent<Tilemap>();
 
         rb = GetComponent<Rigidbody2D>();
+
+        animator = GetComponent<Animator>();
     }
 
     // Update is called once per frame
     void Update()
     {
+        animator.SetBool("IsGrounded", Physics2D.OverlapCircle(groundPos.position, 0.1f, ground));
+
         movement = Input.GetAxis("Horizontal");
 
         if (transform.parent)
@@ -75,12 +81,14 @@ public class Movement : MonoBehaviour
 
         #endregion
 
-        if (Physics2D.OverlapCircle(groundPos.position, 0.1f, ground))
+        if (Physics2D.OverlapCircle(groundPos.position, 0.3f, ground))
         {
             if (land == false)
             {
-               //Vector3Int t = tilemap.WorldToCell(transform.position);
+                //Vector3Int t = tilemap.WorldToCell(transform.position);
                 //Manager.Drift(t + Vector3Int.down);
+
+                //Manager.ScreenShake(3, 0.1f);
             }
 
             land = true;
@@ -88,6 +96,8 @@ public class Movement : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.UpArrow))
             {
                 rb.velocity = new Vector2(rb.velocity.x, jumpForce);
+                //animator.SetTrigger("Jump");
+                //Manager.ScreenShake(3, 0.1f);
             }
         }
         else
@@ -97,10 +107,12 @@ public class Movement : MonoBehaviour
             if(Input.GetKey(KeyCode.UpArrow))
             {
                 rb.gravityScale = 0.5f;
+                animator.SetBool("Glide", true);
             }
             else
             {
                 rb.gravityScale = 2f;
+                animator.SetBool("Glide", false);
             }
         }
 
@@ -122,7 +134,7 @@ public class Movement : MonoBehaviour
         }
 
 
-        if (Physics2D.OverlapCircle(groundPos.position, 0.1f, ground))
+        if (Physics2D.OverlapCircle(groundPos.position, 0.3f, ground))
         {
 
         }
