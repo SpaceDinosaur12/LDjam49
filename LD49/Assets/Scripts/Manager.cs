@@ -31,7 +31,7 @@ public class Manager : MonoBehaviour
     {
         #region Waves-old
 
-        /*if (waveCounter > 0)
+        if (waveCounter > 0)
         {
             waveCounter -= Time.deltaTime;
         }
@@ -56,7 +56,7 @@ public class Manager : MonoBehaviour
             }
 
             waveCounter = Random.Range(waveTime.x, waveTime.y);
-        }*/
+        }
 
         #endregion
 
@@ -113,6 +113,6 @@ public class Manager : MonoBehaviour
 
     public static void Drift(Vector3Int t)
     {
-        desBlocks.Add(t);
+        //desBlocks.Add(t);
     }
 }

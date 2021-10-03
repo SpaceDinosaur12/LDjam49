@@ -10,6 +10,7 @@ public class Movement : MonoBehaviour
     public float movementY;
     public Vector2 direction;
     public float speed;
+    private float realSpeed;
     public Transform highlight;
 
     private Tilemap tilemap;
@@ -38,11 +39,14 @@ public class Movement : MonoBehaviour
     {
         movement = Input.GetAxis("Horizontal");
 
-        this.transform.rotation = Quaternion.Euler(0.0f, 0.0f, this.transform.parent.rotation.z * -1.0f);
+        if (transform.parent)
+        {
+            this.transform.rotation = Quaternion.Euler(0.0f, 0.0f, this.transform.parent.rotation.z * -1.0f);
+        }
 
         #region Carry-old
 
-        if (Input.GetKeyDown(KeyCode.Z))
+        /*if (Input.GetKeyDown(KeyCode.Z))
         {
             if (carry && !tilemap.HasTile(Highlight.highlightPos) && carryCounter <= 0)
             {
@@ -67,7 +71,7 @@ public class Movement : MonoBehaviour
         if (carryCounter > 0)
         {
             carryCounter -= Time.deltaTime;
-        }
+        }*/
 
         #endregion
 
@@ -75,13 +79,13 @@ public class Movement : MonoBehaviour
         {
             if (land == false)
             {
-               Vector3Int t = tilemap.WorldToCell(transform.position);
-                Manager.Drift(t + Vector3Int.down);
+               //Vector3Int t = tilemap.WorldToCell(transform.position);
+                //Manager.Drift(t + Vector3Int.down);
             }
 
             land = true;
 
-            if (Input.GetKeyDown(KeyCode.X))
+            if (Input.GetKeyDown(KeyCode.UpArrow))
             {
                 rb.velocity = new Vector2(rb.velocity.x, jumpForce);
             }
@@ -89,6 +93,15 @@ public class Movement : MonoBehaviour
         else
         {
             land = false;
+
+            if(Input.GetKey(KeyCode.UpArrow))
+            {
+                rb.gravityScale = 0.5f;
+            }
+            else
+            {
+                rb.gravityScale = 2f;
+            }
         }
 
         if (jumpCounter > 0)
@@ -99,6 +112,47 @@ public class Movement : MonoBehaviour
 
     private void FixedUpdate()
     {
-        rb.velocity = new Vector2(movement * speed, rb.velocity.y);
+        rb.velocity = new Vector2(movement * realSpeed, rb.velocity.y);
+
+        if (Physics2D.OverlapCircle(groundPos.position, 0.1f, ground))
+        {
+
+        }
+        else
+        {
+            if (Input.GetKey(KeyCode.UpArrow))
+            {
+                rb.gravityScale = 0.5f;
+
+                realSpeed = speed * 2;
+            }
+            else
+            {
+                rb.gravityScale = 2f;
+
+                realSpeed = speed;
+            }
+        }
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Asteroid"))
+        {
+            Destroy(this.gameObject);
+        }
+
+        if (collision.CompareTag("Tilemap"))
+        {
+            transform.parent = collision.transform;
+        }
+    }
+
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Tilemap"))
+        {
+            transform.parent = null;
+        }
     }
 }

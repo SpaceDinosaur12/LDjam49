@@ -24,6 +24,19 @@ public class Ground : MonoBehaviour
         {
             counter = intervals[current].time;
 
+            if (current < intervals.Length - 1)
+            {
+                current++;
+            }
+            else
+            {
+                current = 0;
+            }
+        }
+        else
+        {
+            counter -= Time.deltaTime;
+
             if (demoGround)
             {
                 if (transform.rotation.z > 45)
@@ -37,22 +50,8 @@ public class Ground : MonoBehaviour
             }
             else
             {
-                while(transform.rotation.z < intervals[current].rotation)
-                    transform.Rotate(new Vector3(0, 0, 1));
+                transform.Rotate(new Vector3(0, 0, intervals[current].rotation));
             }
-
-            if (current < intervals.Length - 1)
-            {
-                current++;
-            }
-            else
-            {
-                current = intervals.Length - 1;
-            }
-        }
-        else
-        {
-            counter -= Time.deltaTime;
         }
     }
 }
