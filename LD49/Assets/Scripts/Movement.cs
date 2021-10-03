@@ -75,7 +75,7 @@ public class Movement : MonoBehaviour
 
         #endregion
 
-        if (Physics2D.OverlapCircle(groundPos.position, 0.05f, ground))
+        if (Physics2D.OverlapCircle(groundPos.position, 0.1f, ground))
         {
             if (land == false)
             {
@@ -112,7 +112,15 @@ public class Movement : MonoBehaviour
 
     private void FixedUpdate()
     {
-        rb.velocity = new Vector2(movement * realSpeed, rb.velocity.y);
+        if (transform.parent)
+        {
+            rb.velocity = new Vector2(movement * realSpeed + transform.parent.GetComponent<Rigidbody2D>().velocity.x, rb.velocity.y);
+        }
+        else
+        {
+            rb.velocity = new Vector2(movement * realSpeed, rb.velocity.y);
+        }
+
 
         if (Physics2D.OverlapCircle(groundPos.position, 0.1f, ground))
         {
@@ -145,6 +153,11 @@ public class Movement : MonoBehaviour
         if (collision.CompareTag("Tilemap"))
         {
             transform.parent = collision.transform;
+        }
+
+        if (collision.CompareTag("Coin"))
+        {
+            Destroy(collision.gameObject);
         }
     }
 

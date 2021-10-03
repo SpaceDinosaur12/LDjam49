@@ -6,10 +6,16 @@ public class Ground : MonoBehaviour
 {
     public bool demoGround;
 
-    public Interval[] intervals;
+    public Vector2 times;
+    public Vector2 speedsPos;
+    public Vector2 speedsNeg;
+    public Vector2 accels;
+
     public float counter;
-    public int current = 0;
-    public float rotLaval;
+    public float speed;
+    public float accel;
+
+    public float currAccel;
 
     // Start is called before the first frame update
     void Start()
@@ -22,43 +28,32 @@ public class Ground : MonoBehaviour
     {
         if (counter < 0)
         {
-            counter = intervals[current].time;
+            counter = Random.Range(times.x, times.y);
 
-            if (current < intervals.Length - 1)
+            if (Random.value > 0.5f)
             {
-                current++;
+                speed = Random.Range(speedsNeg.x, speedsNeg.y);
             }
             else
             {
-                current = 0;
+                speed = Random.Range(speedsPos.x, speedsPos.y);
             }
+            accel = Random.Range(accels.x, accels.y);
         }
         else
         {
             counter -= Time.deltaTime;
 
-            if (demoGround)
+            if (currAccel < speed)
             {
-                if (transform.rotation.z > 45)
-                {
-                    transform.rotation = Quaternion.Euler(0, 0, rotLaval);
-                }
-                else
-                {
-                    transform.Rotate(new Vector3(0, 0, intervals[current].rotation));
-                }
+                currAccel += accel;
             }
-            else
+            if (currAccel > speed)
             {
-                transform.Rotate(new Vector3(0, 0, intervals[current].rotation));
+                currAccel -= accel;
             }
         }
-    }
-}
 
-[System.Serializable]
-public class Interval
-{
-    public float time;
-    public float rotation;
+        transform.Rotate(new Vector3(0, 0, currAccel));
+    }
 }

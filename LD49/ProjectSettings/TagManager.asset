@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 2
   tags:
   - Tilemap
+  - Coin
   - Asteroid
   layers:
   - Default
@@ -13,7 +14,7 @@ TagManager:
   - Ground
   - Water
   - UI
-  - 
+  - Hazard
   - 
   - 
   - 
