@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using UnityEngine.SceneManagement;
 
 public class Movement : MonoBehaviour
 {
@@ -27,6 +28,10 @@ public class Movement : MonoBehaviour
     public bool land;
 
     public Animator animator;
+    public Animator fade;
+    public Animator texture;
+
+    public GameObject dust;
 
     // Start is called before the first frame update
     void Start()
@@ -47,7 +52,7 @@ public class Movement : MonoBehaviour
 
         if (transform.parent)
         {
-            this.transform.rotation = Quaternion.Euler(0.0f, 0.0f, this.transform.parent.rotation.z * -1.0f);
+            this.transform.rotation = Quaternion.Euler(0.0f, 0.0f, this.transform.parent.rotation.z * -1.0f - movement * 20);
         }
 
         #region Carry-old
@@ -88,7 +93,10 @@ public class Movement : MonoBehaviour
                 //Vector3Int t = tilemap.WorldToCell(transform.position);
                 //Manager.Drift(t + Vector3Int.down);
 
-                //Manager.ScreenShake(3, 0.1f);
+                texture.SetTrigger("Shake");
+
+                GameObject g = Instantiate(dust, transform.position, Quaternion.identity);
+                Destroy(g.gameObject, 1f);
             }
 
             land = true;
@@ -96,8 +104,9 @@ public class Movement : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.UpArrow))
             {
                 rb.velocity = new Vector2(rb.velocity.x, jumpForce);
-                //animator.SetTrigger("Jump");
-                //Manager.ScreenShake(3, 0.1f);
+
+                GameObject g = Instantiate(dust, transform.position, Quaternion.identity);
+                Destroy(g.gameObject, 1f);
             }
         }
         else
@@ -159,6 +168,7 @@ public class Movement : MonoBehaviour
     {
         if (collision.CompareTag("Asteroid"))
         {
+            End();
             Destroy(this.gameObject);
         }
 
@@ -169,6 +179,7 @@ public class Movement : MonoBehaviour
 
         if (collision.CompareTag("Coin"))
         {
+            Manager.points++;
             Destroy(collision.gameObject);
         }
     }
@@ -179,5 +190,21 @@ public class Movement : MonoBehaviour
         {
             transform.parent = null;
         }
+    }
+
+    public void End()
+    {
+        fade.SetTrigger("Fade");
+
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+
+        //StartCoroutine("Restart");
+    }
+
+    public IEnumerator Restart()
+    {
+        yield return new WaitForSecondsRealtime(0.5f);
+        //Debug.Log("ggg");
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 }

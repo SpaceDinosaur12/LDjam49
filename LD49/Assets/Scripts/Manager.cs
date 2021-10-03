@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.Tilemaps;
 using Cinemachine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class Manager : MonoBehaviour
 {
@@ -25,6 +26,13 @@ public class Manager : MonoBehaviour
     public static float shakeTimer;
     public Animator fade;
 
+    public static int points;
+    public int blocks;
+    public int goal;
+    public Text blockText;
+    public Text pointText;
+    public bool first;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -33,11 +41,38 @@ public class Manager : MonoBehaviour
         Debug.Log(cm);
 
         waveCounter = Random.Range(waveTime.x, waveTime.y);
+
+        if (first)
+        {
+            points = 0;
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
+        List<Vector3Int> allTiles = new List<Vector3Int>();
+
+        for (int i = -size.x; i < size.x; i++)
+        {
+            for (int o = -size.y; o < size.y; o++)
+            {
+                if (tilemap.HasTile(new Vector3Int(i, o, 0)))
+                {
+                    allTiles.Add(new Vector3Int(i, o, 0));
+                }
+            }
+        }
+
+        blocks = allTiles.Count - 1 - goal;
+        blockText.text = blocks.ToString();
+        pointText.text = points.ToString();
+
+        if (blocks < 1)
+        {
+            End();
+        }
+
         #region Waves-old
 
         if (waveCounter > 0)
@@ -45,25 +80,7 @@ public class Manager : MonoBehaviour
             waveCounter -= Time.deltaTime;
         }
         else
-        { 
-            List<Vector3Int> allTiles = new List<Vector3Int>();
-
-            for (int i = -size.x; i < size.x; i++)
-            {
-                for (int o = -size.y; o < size.y; o++)
-                {
-                    if (tilemap.HasTile(new Vector3Int(i, o, 0)))
-                    {
-                        allTiles.Add(new Vector3Int(i, o, 0));
-                    }
-                }
-            }
-
-            if (allTiles.Count < 1)
-            {
-                End();
-            }
-
+        {
             for (int i = 0; i < Random.Range(waveStrength.x, waveStrength.y); i++)
             {
                 tilemap.SetTile(allTiles[Random.Range(0, allTiles.Count - 1)], null);

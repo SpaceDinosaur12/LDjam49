@@ -5,12 +5,12 @@ using UnityEngine.SceneManagement;
 
 public class MainMenuButtons : MonoBehaviour
 {
-    public GameObject theme;
+    public int points;
 
     // Start is called before the first frame update
     void Start()
     {
-        DontDestroyOnLoad(theme);
+        DontDestroyOnLoad(gameObject);
     }
 
     // Update is called once per frame
@@ -21,6 +21,6 @@ public class MainMenuButtons : MonoBehaviour
 
     public void StartGame()
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+        SceneManager.LoadScene(1);
     }
 }
